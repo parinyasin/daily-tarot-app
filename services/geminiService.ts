@@ -11,39 +11,50 @@ const generateOfflineReading = (card: TarotCard): DailyPrediction => {
   let love = "";
   let work = "";
   let money = "";
+  let advice = "";
 
   switch (card.suit) {
     case Suit.CUPS:
       theme = "เรื่องราวของอารมณ์ ความรู้สึก และความสัมพันธ์";
-      love = "ช่วงนี้อารมณ์อ่อนไหวเป็นพิเศษ หากมีคู่ต้องระวังความน้อยใจ หากโสดมีเกณฑ์พบคนถูกใจจากความใกล้ชิด";
-      work = "งานที่ใช้ความคิดสร้างสรรค์หรือการบริการจะโดดเด่น เพื่อนร่วมงานให้ความช่วยเหลือดี";
+      love = "ช่วงนี้อารมณ์อ่อนไหวเป็นพิเศษ หากมีคู่ต้องระวังความน้อยใจ หากโสดมีเกณฑ์พบคนถูกใจจากความใกล้ชิดค่ะ";
+      work = "งานที่ใช้ความคิดสร้างสรรค์หรือการบริการจะโดดเด่น เพื่อนร่วมงานให้ความช่วยเหลือดีค่ะ";
       money = "ใช้จ่ายไปกับความสุขส่วนตัว หรือการดูแลคนที่รัก ควบคุมงบประมาณให้ดีนะคะ";
+      advice = `ฟังเสียงหัวใจตัวเอง แต่อย่าลืมใช้เหตุผลควบคู่ไปด้วย ไพ่ ${card.name} อยากให้คุณรักษาสมดุลของใจค่ะ`;
       break;
     case Suit.WANDS:
       theme = "เรื่องราวของพลังงาน ความมุ่งมั่น และการกระทำ";
-      love = "ความรักร้อนแรงและรวดเร็ว คนโสดอาจเจอคนจากที่ทำงาน หรือกิจกรรมทางสังคม";
-      work = "มีไฟในการทำงานสูง โปรเจกต์ใหม่ๆ จะก้าวหน้า แต่ระวังความใจร้อน";
-      money = "มีเกณฑ์ได้เงินจากการทำงานพิเศษ หรือโปรเจกต์ระยะสั้น";
+      love = "ความรักร้อนแรงและรวดเร็ว คนโสดอาจเจอคนจากที่ทำงาน หรือกิจกรรมทางสังคมค่ะ";
+      work = "มีไฟในการทำงานสูง โปรเจกต์ใหม่ๆ จะก้าวหน้า แต่ระวังความใจร้อนนะคะ";
+      money = "มีเกณฑ์ได้เงินจากการทำงานพิเศษ หรือโปรเจกต์ระยะสั้นค่ะ";
+      advice = `ความสำเร็จรออยู่แค่เอื้อม ไพ่ ${card.name} เชียร์ให้คุณลงมือทำทันที อย่าลังเลนะคะ`;
       break;
     case Suit.SWORDS:
       theme = "เรื่องราวของความคิด อุปสรรค และการตัดสินใจ";
-      love = "อาจมีความขัดแย้งทางความคิด หรือคำพูดที่ทิ่มแทงใจ ต้องใช้เหตุผลมากกว่าอารมณ์";
-      work = "เจอโจทย์ยากที่ต้องแก้ไข สถานการณ์ตึงเครียดเล็กน้อย แต่จะผ่านไปได้ด้วยสติ";
-      money = "ระวังการตัดสินใจเรื่องการเงินผิดพลาด หรือมีค่าใช้จ่ายเกี่ยวกับสุขภาพ";
+      love = "อาจมีความขัดแย้งทางความคิด หรือคำพูดที่ทิ่มแทงใจ ต้องใช้เหตุผลมากกว่าอารมณ์นะคะ";
+      work = "เจอโจทย์ยากที่ต้องแก้ไข สถานการณ์ตึงเครียดเล็กน้อย แต่จะผ่านไปได้ด้วยสติค่ะ";
+      money = "ระวังการตัดสินใจเรื่องการเงินผิดพลาด หรือมีค่าใช้จ่ายเกี่ยวกับสุขภาพค่ะ";
+      advice = `ปัญหามีทางออกเสมอ ไพ่ ${card.name} แนะให้คุณใช้สติและเหตุผล มากกว่าการใช้อารมณ์ตัดสินค่ะ`;
       break;
     case Suit.PENTACLES:
       theme = "เรื่องราวของความมั่นคง ทรัพย์สิน และผลประโยชน์";
-      love = "ความรักเน้นความมั่นคงและการสร้างอนาคต อาจไม่หวือหวาแต่มั่นคง";
-      work = "ผลงานเป็นที่ประจักษ์ ความพยายามที่ผ่านมาเริ่มส่งผลเป็นรูปธรรม";
-      money = "การเงินโดดเด่น มีโอกาสได้รับผลตอบแทน หรือข่าวดีเรื่องโบนัส";
+      love = "ความรักเน้นความมั่นคงและการสร้างอนาคต อาจไม่หวือหวาแต่มั่นคงค่ะ";
+      work = "ผลงานเป็นที่ประจักษ์ ความพยายามที่ผ่านมาเริ่มส่งผลเป็นรูปธรรมแล้วค่ะ";
+      money = "การเงินโดดเด่น มีโอกาสได้รับผลตอบแทน หรือข่าวดีเรื่องโบนัสค่ะ";
+      advice = `ความอดทนคือกุญแจสำคัญ ไพ่ ${card.name} บอกว่าผลลัพธ์ที่คุ้มค่ากำลังเดินทางมาหาคุณค่ะ`;
       break;
     case Suit.MAJOR:
     default:
       theme = "เรื่องราวของโชคชะตาและการเปลี่ยนแปลงครั้งสำคัญ";
-      love = "เป็นช่วงเวลาแห่งจุดเปลี่ยนสำคัญในความสัมพันธ์ หรือการเรียนรู้บทเรียนใหม่ๆ";
-      work = "อาจมีการเปลี่ยนแปลงโครงสร้าง หรือได้รับมอบหมายหน้าที่ใหม่ที่ท้าทาย";
-      money = "มีเกณฑ์เปลี่ยนแปลงสถานะทางการเงิน ทั้งในทางที่ดีขึ้นหรือต้องระวังมากขึ้น";
+      love = "เป็นช่วงเวลาแห่งจุดเปลี่ยนสำคัญในความสัมพันธ์ หรือการเรียนรู้บทเรียนใหม่ๆ ค่ะ";
+      work = "อาจมีการเปลี่ยนแปลงโครงสร้าง หรือได้รับมอบหมายหน้าที่ใหม่ที่ท้าทายค่ะ";
+      money = "มีเกณฑ์เปลี่ยนแปลงสถานะทางการเงิน ทั้งในทางที่ดีขึ้นหรือต้องระวังมากขึ้นค่ะ";
+      advice = `เปิดใจรับการเปลี่ยนแปลง ไพ่ ${card.name} คือสัญญาณของการเติบโตไปสู่อีกขั้นของชีวิตค่ะ`;
       break;
+  }
+
+  // Special overrides for specific Ace cards to make it feel more dynamic
+  if (card.name.startsWith("Ace")) {
+     advice = `การเริ่มต้นใหม่ที่ดีกำลังรอคุณอยู่ เปิดใจรับโอกาสที่เข้ามาด้วยความมั่นใจนะคะ`;
   }
 
   return {
@@ -51,7 +62,7 @@ const generateOfflineReading = (card: TarotCard): DailyPrediction => {
     work: work,
     love: love,
     money: money,
-    advice: "ขอให้เชื่อมั่นในสัญชาตญาณของตัวเอง แล้วทุกอย่างจะผ่านไปได้ด้วยดีค่ะ"
+    advice: advice // Dynamic advice based on suit
   };
 };
 
@@ -64,7 +75,6 @@ export const getDailyReading = async (card: TarotCard): Promise<DailyPrediction>
   }
 
   // 2. FALLBACK / OFFLINE MODE (If No API Key)
-  // Fixed: Instead of returning static text, we generate text based on the card's suit.
   if (!process.env.API_KEY) {
     console.warn("No API Key. Using offline interpretation.");
     await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate thinking
@@ -75,7 +85,7 @@ export const getDailyReading = async (card: TarotCard): Promise<DailyPrediction>
 
   // 3. AI GENERATION
   const prompt = `
-    You are "การะเกต์พยากรณ์" (Garagay Horo), a mystical Tarot Reader using the Rider-Waite deck.
+    You are "การะเกต์พยากรณ์" (Garagay Horo), a professional Tarot Reader using the Rider-Waite deck.
     
     CONTEXT:
     - The user drew the card: "${card.name}" (Suit: ${card.suit}).
@@ -87,7 +97,7 @@ export const getDailyReading = async (card: TarotCard): Promise<DailyPrediction>
     2. TONE: Mystical, Warm, Encouraging, Polite (สุภาพ).
     3. KEYWORDS: Do NOT use "Oracle" or "โอราเคิล". Use "ไพ่" (The Cards) or "Tarot".
     4. ENDINGS: You MUST use only polite particles "ค่ะ", "คะ", "นะคะ".
-    5. FORBIDDEN: Do NOT use "จ้ะ", "จ๊ะ".
+    5. FORBIDDEN: Do NOT use "จ้ะ", "จ๊ะ" under any circumstances.
     6. UNIQUENESS: The reading MUST be based on the specific imagery and meaning of ${card.name}. Do NOT give generic advice.
 
     OUTPUT JSON (Thai Language):
@@ -96,7 +106,7 @@ export const getDailyReading = async (card: TarotCard): Promise<DailyPrediction>
       "work": "คำทำนายการงานเจาะจงตามหน้าไพ่",
       "love": "คำทำนายความรัก (คนโสด/มีคู่) ตามหน้าไพ่",
       "money": "คำทำนายการเงิน โชคลาภ ตามหน้าไพ่",
-      "advice": "ข้อคิดเตือนใจสั้นๆ จากไพ่ใบนี้"
+      "advice": "ข้อคิดเตือนใจสั้นๆ จากไพ่ใบนี้ (ต้องเจาะจงเฉพาะไพ่ใบนี้)"
     }
   `;
 
