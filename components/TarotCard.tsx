@@ -55,9 +55,9 @@ export const TarotCardDisplay: React.FC<Props> = ({
             <img 
               src={getCardImageUrl(card.imageKey, card.id)} 
               alt={card.name} 
+              referrerPolicy="no-referrer"
               className="w-full h-full object-cover"
               onError={() => setImageError(true)}
-              crossOrigin="anonymous"
             />
           ) : (
             // Fallback UI when image fails to load

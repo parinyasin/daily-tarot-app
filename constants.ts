@@ -7,33 +7,24 @@ import { TarotCard, Suit, DailyPrediction } from './types';
 // โลโก้แบรนด์ของคุณ (Updated from Facebook CDN)
 export const BRAND_ICON_URL = "https://scontent.fcnx2-1.fna.fbcdn.net/v/t39.30808-6/293528064_604378537725373_836798200753896058_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeFy21KDPO0mrWUymCbFs2R2MPPDRprA8-cw88NGmsDz5w5rdzR_C-x1B1SSKLye-yc&_nc_ohc=OOyaZZqsdKcQ7kNvwHEDmvr&_nc_oc=AdnMLYorNlz6R7r_4JMPBWj8r4nGRn0TV2XlzJeqdZKt5mrqZ_-uVC9-48hQ6y-H79k&_nc_zt=23&_nc_ht=scontent.fcnx2-1.fna&_nc_gid=mXtMes3E8tGT1Pqsecbayg&oh=00_AfiPIKLv8GX2X1BBMm85iOHGboVH6I82xsZunyj4VGlemA&oe=692357EB"; 
 
-// รูปหลังไพ่
-export const BACK_OF_CARD_IMAGE = "./card_back.jpg"
+// รูปหลังไพ่ (Classic Rider Waite Plaid Back)
+export const BACK_OF_CARD_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/d/d4/RWS_Tarot_Card_Back.jpg"
 
 // ------------------------------------------------------------------
 // 2. CARD IMAGES LOGIC (ระบบจัดการรูปหน้าไพ่)
 // ------------------------------------------------------------------
 
-// [วิธีใช้รูปไพ่ของคุณเอง]
-// 1. Google Drive "Folder Link" ใช้ไม่ได้ครับ ต้องเป็นลิงก์รูปโดยตรง (Direct Link) ที่ลงท้ายด้วย .jpg/.png
-// 2. แนะนำให้ฝากรูปที่ Imgur.com หรือ hosting ของคุณเอง
-// 3. นำลิงก์มาใส่ใน CUSTOM_CARD_MAP ด้านล่างนี้ ตาม ID ของไพ่
-
 const CUSTOM_CARD_MAP: Record<string, string> = {
-  // ตัวอย่าง:
-  // 'major-0': 'https://your-image-url.com/fool.jpg',
+  // Override specific cards here if needed
 };
 
-// Default Source: ใช้รูปจาก GitHub (Marshall Swain) ที่มีความเสถียรสูงและไฟล์ครบถ้วน
-const DEFAULT_BASE_URL = "https://raw.githubusercontent.com/marshallswain/tarot-images/master/cards";
+// Source: Sacred Texts (Original PKT Images) - Very reliable
+const DEFAULT_BASE_URL = "https://www.sacred-texts.com/tarot/pkt/img";
 
 export const getCardImageUrl = (imageKey: string, cardId: string) => {
-  // 1. ถ้ามีการกำหนดรูปเองใน CUSTOM_CARD_MAP ให้ใช้รูปนั้นก่อน
   if (CUSTOM_CARD_MAP[cardId]) {
     return CUSTOM_CARD_MAP[cardId];
   }
-
-  // 2. ถ้าไม่มี ให้ใช้รูปมาตรฐานจาก GitHub
   return `${DEFAULT_BASE_URL}/${imageKey}.jpg`;
 };
 
@@ -43,45 +34,56 @@ export const getCardImageUrl = (imageKey: string, cardId: string) => {
 
 const SUIT_NAMES = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Page", "Knight", "Queen", "King"];
 
+// Helper to map index (0-13) to PKT filename suffix (ac, 02...10, pa, kn, qu, ki)
+const getPKTSuffix = (index: number): string => {
+  if (index === 0) return 'ac'; // Ace
+  if (index <= 9) return String(index + 1).padStart(2, '0'); // 02 - 10
+  if (index === 10) return 'pa'; // Page
+  if (index === 11) return 'kn'; // Knight
+  if (index === 12) return 'qu'; // Queen
+  if (index === 13) return 'ki'; // King
+  return '00';
+};
+
 export const FULL_DECK: TarotCard[] = [
-  // Major Arcana (00 - 21)
+  // Major Arcana (00 - 21) -> Prefix 'ar' e.g., ar00.jpg
   ...["The Fool", "The Magician", "The High Priestess", "The Empress", "The Emperor", "The Hierophant", "The Lovers", "The Chariot", "Strength", "The Hermit", "Wheel of Fortune", "Justice", "The Hanged Man", "Death", "Temperance", "The Devil", "The Tower", "The Star", "The Moon", "The Sun", "Judgement", "The World"].map((name, i) => ({
     id: `major-${i}`,
     name,
     suit: Suit.MAJOR,
-    imageKey: `${String(i).padStart(2, '0')}`,
+    imageKey: `ar${String(i).padStart(2, '0')}`,
     keywords: []
   })),
-  // Swords (s01 - s14)
+  // Swords -> Prefix 'sw'
   ...SUIT_NAMES.map((name, i) => ({
     id: `swords-${i}`,
     name: `${name} of Swords`,
     suit: Suit.SWORDS,
-    imageKey: `s${String(i + 1).padStart(2, '0')}`,
+    imageKey: `sw${getPKTSuffix(i)}`,
     keywords: []
   })),
-  // Pentacles (p01 - p14)
+  // Pentacles -> Prefix 'pe'
   ...SUIT_NAMES.map((name, i) => ({
     id: `pentacles-${i}`,
     name: `${name} of Pentacles`,
     suit: Suit.PENTACLES,
-    imageKey: `p${String(i + 1).padStart(2, '0')}`,
+    imageKey: `pe${getPKTSuffix(i)}`,
     keywords: []
   })),
-  // Wands (w01 - w14)
+  // Wands -> Prefix 'wa'
   ...SUIT_NAMES.map((name, i) => ({
     id: `wands-${i}`,
     name: `${name} of Wands`,
     suit: Suit.WANDS,
-    imageKey: `w${String(i + 1).padStart(2, '0')}`,
+    imageKey: `wa${getPKTSuffix(i)}`,
     keywords: []
   })),
-  // Cups (c01 - c14)
+  // Cups -> Prefix 'cu'
   ...SUIT_NAMES.map((name, i) => ({
     id: `cups-${i}`,
     name: `${name} of Cups`,
     suit: Suit.CUPS,
-    imageKey: `c${String(i + 1).padStart(2, '0')}`,
+    imageKey: `cu${getPKTSuffix(i)}`,
     keywords: []
   })),
 ];
