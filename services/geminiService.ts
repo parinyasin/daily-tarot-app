@@ -2,111 +2,109 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { DailyPrediction, TarotCard, Suit } from "../types";
 import { STATIC_READINGS } from "../constants";
 
-// Helper to generate dynamic content based on card suit if AI fails
+// Helper: Generate unique offline reading based on Suit + Rank (Number/Court)
+// This ensures even without AI, every card has a different vibe.
 const generateOfflineReading = (card: TarotCard): DailyPrediction => {
-  const seed = card.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const getRandom = (opts: string[]) => opts[seed % opts.length];
-
-  let theme = "";
-  let love = "";
-  let work = "";
-  let money = "";
+  
+  // Extract Rank (Ace, Two, King...) from name
+  const rank = card.name.split(" ")[0]; 
+  let action = "";
   let advice = "";
+
+  // 1. Determine Action based on Rank
+  switch (rank) {
+    case "Ace": action = "การเริ่มต้นใหม่ที่มาพร้อมกับพลังงานบริสุทธิ์"; break;
+    case "Two": action = "การหาจุดสมดุลและการตัดสินใจเลือกระหว่างสองสิ่ง"; break;
+    case "Three": action = "การขยายตัว ความร่วมมือ และมิตรภาพใหม่ๆ"; break;
+    case "Four": action = "ความมั่นคงที่อาจมาพร้อมกับความน่าเบื่อหน่าย หรือการหยุดพัก"; break;
+    case "Five": action = "ความท้าทาย ความขัดแย้ง หรือการสูญเสียที่ต้องก้าวผ่าน"; break;
+    case "Six": action = "ความช่วยเหลือ ชัยชนะ หรือความทรงจำในอดีตที่หวนคืน"; break;
+    case "Seven": action = "การประเมินทางเลือก หรือความสับสนที่มีหลายสิ่งให้ทำ"; break;
+    case "Eight": action = "การทุ่มเทความพยายาม หรือการเดินหนีจากสิ่งที่ไปต่อไม่ได้"; break;
+    case "Nine": action = "ความอุดมสมบูรณ์ ความพึงพอใจในสิ่งที่ตนเองสร้างมา"; break;
+    case "Ten": action = "ความสมบูรณ์แบบ การสิ้นสุดวงจรเพื่อเริ่มใหม่"; break;
+    case "Page": action = "ข่าวสารใหม่ๆ หรือโอกาสในการเรียนรู้ที่กำลังเข้ามา"; break;
+    case "Knight": action = "การเคลื่อนไหวอย่างรวดเร็ว การมุ่งหน้าสู่เป้าหมาย"; break;
+    case "Queen": action = "การจัดการด้วยวุฒิภาวะและความเข้าใจอย่างลึกซึ้ง"; break;
+    case "King": action = "ความสำเร็จในระดับสูง การควบคุมสถานการณ์ได้อย่างอยู่หมัด"; break;
+    case "The": action = "โชคชะตาที่กำลังหมุนวนและบทเรียนสำคัญของชีวิต"; break; // Major Arcana mostly start with "The"
+    default: action = "พลังงานที่มีความเฉพาะตัวสูง"; break;
+  }
+
+  // 2. Determine Flavor based on Suit
+  let suitFlavor = "";
+  let specificAdvice = "";
 
   switch (card.suit) {
     case Suit.CUPS:
-      theme = "เรื่องราวของอารมณ์ ความรู้สึก และความสัมพันธ์";
-      love = "ช่วงนี้อารมณ์อ่อนไหวเป็นพิเศษ หากมีคู่ต้องระวังความน้อยใจ หากโสดมีเกณฑ์พบคนถูกใจจากความใกล้ชิดค่ะ";
-      work = "งานที่ใช้ความคิดสร้างสรรค์หรือการบริการจะโดดเด่น เพื่อนร่วมงานให้ความช่วยเหลือดีค่ะ";
-      money = "ใช้จ่ายไปกับความสุขส่วนตัว หรือการดูแลคนที่รัก ควบคุมงบประมาณให้ดีนะคะ";
-      advice = `ฟังเสียงหัวใจตัวเอง แต่อย่าลืมใช้เหตุผลควบคู่ไปด้วย ไพ่ ${card.name} อยากให้คุณรักษาสมดุลของใจค่ะ`;
+      suitFlavor = "ด้านอารมณ์และความรู้สึก";
+      specificAdvice = `ใช้หัวใจนำทางแต่อย่าลืมพกสติไปด้วย ไพ่ ${card.name} เตือนเรื่องความอ่อนไหวที่มากเกินไปค่ะ`;
       break;
     case Suit.WANDS:
-      theme = "เรื่องราวของพลังงาน ความมุ่งมั่น และการกระทำ";
-      love = "ความรักร้อนแรงและรวดเร็ว คนโสดอาจเจอคนจากที่ทำงาน หรือกิจกรรมทางสังคมค่ะ";
-      work = "มีไฟในการทำงานสูง โปรเจกต์ใหม่ๆ จะก้าวหน้า แต่ระวังความใจร้อนนะคะ";
-      money = "มีเกณฑ์ได้เงินจากการทำงานพิเศษ หรือโปรเจกต์ระยะสั้นค่ะ";
-      advice = `ความสำเร็จรออยู่แค่เอื้อม ไพ่ ${card.name} เชียร์ให้คุณลงมือทำทันที อย่าลังเลนะคะ`;
+      suitFlavor = "ด้านความมุ่งมั่นและการกระทำ";
+      specificAdvice = `อย่าแค่คิดแต่ให้ลงมือทำทันที พลังของ ${card.name} สนับสนุนคนที่กล้าลุยค่ะ`;
       break;
     case Suit.SWORDS:
-      theme = "เรื่องราวของความคิด อุปสรรค และการตัดสินใจ";
-      love = "อาจมีความขัดแย้งทางความคิด หรือคำพูดที่ทิ่มแทงใจ ต้องใช้เหตุผลมากกว่าอารมณ์นะคะ";
-      work = "เจอโจทย์ยากที่ต้องแก้ไข สถานการณ์ตึงเครียดเล็กน้อย แต่จะผ่านไปได้ด้วยสติค่ะ";
-      money = "ระวังการตัดสินใจเรื่องการเงินผิดพลาด หรือมีค่าใช้จ่ายเกี่ยวกับสุขภาพค่ะ";
-      advice = `ปัญหามีทางออกเสมอ ไพ่ ${card.name} แนะให้คุณใช้สติและเหตุผล มากกว่าการใช้อารมณ์ตัดสินค่ะ`;
+      suitFlavor = "ด้านความคิดและอุปสรรค";
+      specificAdvice = `ใช้เหตุผลเหนืออารมณ์ ไพ่ ${card.name} แนะให้ตัดสิ่งที่ยุ่งเหยิงออกไปจากชีวิตค่ะ`;
       break;
     case Suit.PENTACLES:
-      theme = "เรื่องราวของความมั่นคง ทรัพย์สิน และผลประโยชน์";
-      love = "ความรักเน้นความมั่นคงและการสร้างอนาคต อาจไม่หวือหวาแต่มั่นคงค่ะ";
-      work = "ผลงานเป็นที่ประจักษ์ ความพยายามที่ผ่านมาเริ่มส่งผลเป็นรูปธรรมแล้วค่ะ";
-      money = "การเงินโดดเด่น มีโอกาสได้รับผลตอบแทน หรือข่าวดีเรื่องโบนัสค่ะ";
-      advice = `ความอดทนคือกุญแจสำคัญ ไพ่ ${card.name} บอกว่าผลลัพธ์ที่คุ้มค่ากำลังเดินทางมาหาคุณค่ะ`;
+      suitFlavor = "ด้านทรัพย์สินและความมั่นคง";
+      specificAdvice = `มองที่ผลลัพธ์ระยะยาว ไพ่ ${card.name} บอกว่าช้าแต่ชัวร์จะดีกว่านะคะ`;
       break;
     case Suit.MAJOR:
-    default:
-      theme = "เรื่องราวของโชคชะตาและการเปลี่ยนแปลงครั้งสำคัญ";
-      love = "เป็นช่วงเวลาแห่งจุดเปลี่ยนสำคัญในความสัมพันธ์ หรือการเรียนรู้บทเรียนใหม่ๆ ค่ะ";
-      work = "อาจมีการเปลี่ยนแปลงโครงสร้าง หรือได้รับมอบหมายหน้าที่ใหม่ที่ท้าทายค่ะ";
-      money = "มีเกณฑ์เปลี่ยนแปลงสถานะทางการเงิน ทั้งในทางที่ดีขึ้นหรือต้องระวังมากขึ้นค่ะ";
-      advice = `เปิดใจรับการเปลี่ยนแปลง ไพ่ ${card.name} คือสัญญาณของการเติบโตไปสู่อีกขั้นของชีวิตค่ะ`;
+      suitFlavor = "ด้านบทเรียนชีวิตที่สำคัญ";
+      specificAdvice = `ยอมรับการเปลี่ยนแปลงที่เกิดขึ้น ไพ่ ${card.name} คือจุดเปลี่ยนที่จะพาคุณไปสู่สิ่งที่ดีกว่าค่ะ`;
       break;
-  }
-
-  // Special overrides for specific Ace cards to make it feel more dynamic
-  if (card.name.startsWith("Ace")) {
-     advice = `การเริ่มต้นใหม่ที่ดีกำลังรอคุณอยู่ เปิดใจรับโอกาสที่เข้ามาด้วยความมั่นใจนะคะ`;
   }
 
   return {
-    general: `สำหรับไพ่ ${card.name} เป็น${theme} พลังงานวันนี้ขอให้คุณเตรียมพร้อมรับมือกับสิ่งที่กำลังจะเข้ามานะคะ`,
-    work: work,
-    love: love,
-    money: money,
-    advice: advice // Dynamic advice based on suit
+    general: `ไพ่ ${card.name} คือ${action}ใน${suitFlavor} วันนี้จะมีเรื่องราวให้ต้องขบคิดเกี่ยวกับเรื่องนี้ค่ะ`,
+    work: "งานที่ทำอยู่ต้องอาศัยความละเอียดรอบคอบ หรืออาจมีการเปลี่ยนแปลงรูปแบบการทำงานกระทันหันค่ะ",
+    love: "ความสัมพันธ์ต้องการความเข้าใจ มากกว่าการใช้อารมณ์เข้าหากันนะคะ",
+    money: "ระมัดระวังการใช้จ่าย หรือวางแผนการลงทุนระยะยาวจะส่งผลดีค่ะ",
+    advice: specificAdvice // Unique per suit/rank combo
   };
 };
 
 export const getDailyReading = async (card: TarotCard): Promise<DailyPrediction> => {
   
-  // 1. CHECK YOUR STATIC PREDICTIONS FIRST (Prioritize User Content)
+  // 1. Check Static Readings
   if (STATIC_READINGS[card.id]) {
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise(resolve => setTimeout(resolve, 1000));
     return STATIC_READINGS[card.id];
   }
 
-  // 2. FALLBACK / OFFLINE MODE (If No API Key)
+  // 2. Fallback if NO API Key
   if (!process.env.API_KEY) {
-    console.warn("No API Key. Using offline interpretation.");
-    await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate thinking
+    console.warn("No API Key. Using Offline Logic.");
+    await new Promise(resolve => setTimeout(resolve, 1500));
     return generateOfflineReading(card);
   }
 
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-  // 3. AI GENERATION
+  // 3. AI Prompt - Strengthened to prevent repetitive phrases
   const prompt = `
-    You are "การะเกต์พยากรณ์" (Garagay Horo), a professional Tarot Reader using the Rider-Waite deck.
-    
-    CONTEXT:
-    - The user drew the card: "${card.name}" (Suit: ${card.suit}).
-    - Date: ${new Date().toLocaleDateString('th-TH')}.
-    - Task: Interpret this SPECIFIC card for a daily reading.
+    Role: You are "การะเกต์พยากรณ์" (Garagay Horo), an expert Tarot reader.
+    Card Drawn: "${card.name}" (${card.suit})
+    Date: ${new Date().toLocaleDateString('th-TH')}
 
-    STRICT RULES:
-    1. BRAND: Use the persona of "การะเกต์" (Garagay).
-    2. TONE: Mystical, Warm, Encouraging, Polite (สุภาพ).
-    3. KEYWORDS: Do NOT use "Oracle" or "โอราเคิล". Use "ไพ่" (The Cards) or "Tarot".
-    4. ENDINGS: You MUST use only polite particles "ค่ะ", "คะ", "นะคะ".
-    5. FORBIDDEN: Do NOT use "จ้ะ", "จ๊ะ" under any circumstances.
-    6. UNIQUENESS: The reading MUST be based on the specific imagery and meaning of ${card.name}. Do NOT give generic advice.
+    Task: Interpret this specific card for a daily reading.
 
-    OUTPUT JSON (Thai Language):
+    CRITICAL CONSTRAINTS (Must Follow):
+    1.  **NEGATIVE CONSTRAINT:** Do NOT use the phrase "ขอให้เชื่อมั่นในสัญชาตญาณของตัวเอง แล้วทุกอย่างจะผ่านไปได้ด้วยดี" or anything similar to "Trust your intuition". This is forbidden.
+    2.  **SPECIFICITY:** Your advice MUST reference the visual symbol on the card (e.g., if Cups, talk about water/emotions; if Swords, talk about air/mind). The advice must be UNIQUE to ${card.name}.
+    3.  **TONE:** Mystical but warm and polite.
+    4.  **ENDING PARTICLES:** Use ONLY "ค่ะ", "คะ", "นะคะ". Do NOT use "จ้ะ" or "จ๊ะ".
+
+    Output JSON (Thai):
     {
-      "general": "ภาพรวมพลังงานของไพ่ใบนี้ในวันนี้",
-      "work": "คำทำนายการงานเจาะจงตามหน้าไพ่",
-      "love": "คำทำนายความรัก (คนโสด/มีคู่) ตามหน้าไพ่",
-      "money": "คำทำนายการเงิน โชคลาภ ตามหน้าไพ่",
-      "advice": "ข้อคิดเตือนใจสั้นๆ จากไพ่ใบนี้ (ต้องเจาะจงเฉพาะไพ่ใบนี้)"
+      "general": "Meaning of ${card.name} for today",
+      "work": "Work prediction based on ${card.name}",
+      "love": "Love prediction based on ${card.name}",
+      "money": "Money prediction based on ${card.name}",
+      "advice": "A specific, unique piece of actionable advice based on the imagery of ${card.name}. (Max 1 sentence)"
     }
   `;
 
@@ -115,6 +113,8 @@ export const getDailyReading = async (card: TarotCard): Promise<DailyPrediction>
       model: "gemini-2.5-flash",
       contents: prompt,
       config: {
+        temperature: 1.1, // Higher creativity to avoid repetitive phrases
+        topK: 40,
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
@@ -131,14 +131,18 @@ export const getDailyReading = async (card: TarotCard): Promise<DailyPrediction>
     });
 
     if (response.text) {
-      return JSON.parse(response.text) as DailyPrediction;
+      const result = JSON.parse(response.text) as DailyPrediction;
+      // Double check to ensure no forbidden words slipped through (safety net)
+      if (result.advice.includes("เชื่อมั่นในสัญชาตญาณ")) {
+         result.advice = `ไพ่ ${card.name} อยากให้คุณพิจารณาข้อเท็จจริงตรงหน้า แล้วตัดสินใจด้วยความรอบคอบนะคะ`;
+      }
+      return result;
     }
     
-    throw new Error("Empty response from AI");
+    throw new Error("Empty response");
 
   } catch (error) {
-    console.error("Tarot service error:", error);
-    // If AI fails, fall back to the improved dynamic offline reading
+    console.error("AI Error, using fallback:", error);
     return generateOfflineReading(card);
   }
 };
